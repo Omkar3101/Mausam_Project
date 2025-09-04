@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mausam</title>
+    <link rel="stylesheet" href="index.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+    />
+	<link rel="shortcut icon" href="https://i.pinimg.com/originals/06/c4/f7/06c4f70ec5931e2342e703e8a3f0a253.png" type="image/x-icon">
+  </head>
+  <body>
+	<video src="https://cdn.pixabay.com/video/2016/09/14/5278-182817488_large.mp4" type="video/mp4" autoplay muted loop id="bg-video">
+</video>
+
+    <div class="container">
+      <div class="weather-card">
+        <h1 style="color: green">Mausam</h1>
+        <h3>Today's Weather Forecast</h3>
+        <input type="text" id="city-input" placeholder="Enter city name" />
+        <button id="city-input-btn">Get Weather</button>
+        <div id="weather-info" class="animate__animated animate__fadeIn">
+          <h3 id="city-name"></h3>
+          <p id="region-country"></p>
+          <p id="date"></p>
+          <img id="weather-icon" src="" alt="Weather Icon" />
+          <p id="temperature"></p>
+          <p id="description"></p>
+          <p id="wind-speed"></p>
+        </div>
+      </div>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
