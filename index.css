@@ -97,3 +97,73 @@ body {
     font-size: 14px;
     color: rgb(255, 0, 0);
 }
+
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .weather-card {
+        width: 90%;
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    #city-input {
+        width: 80%;
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    #city-input-btn {
+        padding: 8px;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    #temperature {
+        font-size: 20px;
+    }
+
+    #description {
+        font-size: 16px;
+    }
+
+    #weather-icon {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .weather-card {
+        width: 95%;
+        padding: 10px;
+    }
+
+    #city-input {
+        width: 90%;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    #city-input-btn {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    #temperature {
+        font-size: 18px;
+    }
+
+    #description {
+        font-size: 14px;
+    }
+
+    #date, #wind-speed {
+        font-size: 12px;
+    }
+
+    #weather-icon {
+        width: 60px;
+        height: 60px;
+    }
+}
