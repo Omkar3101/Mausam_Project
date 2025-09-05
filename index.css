@@ -189,7 +189,6 @@ h3 {
     .weather-card {
         width: 90vw;
         flex-direction: column;
-        gap: 20px;
     }
 
     .group {
