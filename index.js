@@ -1,3 +1,5 @@
+//Opencage -  933e577d37444ed5ab162b1f5f6e6371
+//Geoapify - 744ff32fafd6489484a68e503580cf37
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var cityInput = document.getElementById("city-input");
-var cityInputBtn = document.getElementById("city-input-btn");
 var cityName = document.getElementById("city-name");
 var date = document.getElementById("date");
 var temp = document.getElementById("temperature");
@@ -43,6 +44,40 @@ var desc = document.getElementById("description");
 var weatherIcon = document.getElementById("weather-icon");
 var regionCountry = document.getElementById("region-country");
 var bgVideo = document.getElementById("bg-video");
+var h1 = document.querySelector("h1");
+var cityImg = document.getElementById("city-img");
+var GEOAPIFY_API_KEY = "744ff32fafd6489484a68e503580cf37"; // apna Geoapify API Key
+var OPENCAGE_API_KEY = "933e577d37444ed5ab162b1f5f6e6371"; // apna Opencage API Key
+function getCoordinates(cityName) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, data, _a, lat, lng, error_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 3, , 4]);
+                    return [4 /*yield*/, fetch("https://api.opencagedata.com/geocode/v1/json?q=".concat(cityName, "&key=").concat(OPENCAGE_API_KEY))];
+                case 1:
+                    res = _b.sent();
+                    return [4 /*yield*/, res.json()];
+                case 2:
+                    data = _b.sent();
+                    if (data.results.length > 0) {
+                        _a = data.results[0].geometry, lat = _a.lat, lng = _a.lng;
+                        return [2 /*return*/, {
+                                latitude: lat,
+                                longitude: lng
+                            }];
+                    }
+                    throw new Error("Location not found");
+                case 3:
+                    error_1 = _b.sent();
+                    console.error("Error getting coordinates:", error_1);
+                    return [2 /*return*/, null];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
 // Fetch Weather Data from API
 function fetchWeatherData(cityName) {
     return __awaiter(this, void 0, void 0, function () {
@@ -65,68 +100,101 @@ function main() {
     return __awaiter(this, void 0, void 0, function () {
         var _this = this;
         return __generator(this, function (_a) {
-            // Event Listener on Button to get the Weather Data
-            cityInputBtn === null || cityInputBtn === void 0 ? void 0 : cityInputBtn.addEventListener("click", function () { return __awaiter(_this, void 0, void 0, function () {
-                var city, weatherData;
+            // Event Listener on Input to get the Weather Data
+            cityInput.addEventListener("keypress", function (event) { return __awaiter(_this, void 0, void 0, function () {
+                var city, weatherData, coordinates, latitude, longitude, textGradient;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
+                            if (!(event.key === "Enter")) return [3 /*break*/, 5];
                             city = cityInput.value;
                             return [4 /*yield*/, fetchWeatherData(city)];
                         case 1:
                             weatherData = _a.sent();
-                            if (city === "") {
-                                alert("Please enter a city name");
-                                document.getElementById("weather-info").style.display = "none";
+                            if (!(city === "")) return [3 /*break*/, 2];
+                            alert("Please enter a city name");
+                            document.getElementById("weather-info").style.display = "none";
+                            document.getElementById("city-img").style.display = "none";
+                            return [3 /*break*/, 5];
+                        case 2:
+                            if (!weatherData.error) return [3 /*break*/, 3];
+                            alert(weatherData.error.message);
+                            document.getElementById("weather-info").style.display = "none";
+                            document.getElementById("city-img").style.display = "none";
+                            return [3 /*break*/, 5];
+                        case 3:
+                            document.getElementById("weather-info").style.display = "block";
+                            document.getElementById("city-img").style.display = "block";
+                            cityName.innerText = weatherData.location.name;
+                            date.innerText = weatherData.current.last_updated;
+                            temp.innerText = weatherData.current.temp_c + "°C";
+                            desc.innerText = weatherData.current.condition.text;
+                            weatherIcon.src = weatherData.current.condition.icon;
+                            regionCountry.innerText = "".concat(weatherData.location.region, ", ").concat(weatherData.location.country);
+                            return [4 /*yield*/, getCoordinates(cityName.innerText)];
+                        case 4:
+                            coordinates = _a.sent();
+                            if (coordinates) {
+                                latitude = coordinates.latitude, longitude = coordinates.longitude;
+                                console.log("Latitude: ".concat(latitude, ", Longitude: ").concat(longitude));
+                                cityImg.src = "https://maps.geoapify.com/v1/staticmap?style=osm-liberty&width=300&height=300&center=lonlat:".concat(longitude, ",").concat(latitude, "&zoom=8&apiKey=").concat(GEOAPIFY_API_KEY);
                             }
-                            else if (weatherData.error) {
-                                alert(weatherData.error.message);
-                                document.getElementById("weather-info").style.display = "none";
+                            textGradient = function (css) {
+                                h1.style.background = css;
+                                h1.style.backgroundClip = "text";
+                                h1.style.webkitBackgroundClip = "text";
+                                h1.style.color = "transparent";
+                                h1.style.webkitTextFillColor = "transparent";
+                            };
+                            if (desc.innerText.includes("rain") ||
+                                desc.innerText.includes("Rain")) {
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2023/09/23/181916-867576005_large.mp4";
+                                textGradient("linear-gradient(90deg, #4e54c8, #8e9eab, #eef2f3)");
+                            }
+                            else if (desc.innerText.includes("cloud") ||
+                                desc.innerText.includes("Cloud")) {
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2024/07/14/221180_large.mp4";
+                                textGradient("linear-gradient(90deg, #b1bfd8, #8e9eab, #eef2f3)");
+                            }
+                            else if (desc.innerText.includes("sunny") ||
+                                desc.innerText.includes("Sunny")) {
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2023/06/25/168788-839828005_large.mp4";
+                                textGradient("linear-gradient(90deg, #ffd6e0, #fff6b7, #f7c59f)"); // warm yellow-pink
+                            }
+                            else if (desc.innerText.includes("snow") ||
+                                desc.innerText.includes("Snow")) {
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2023/11/12/188778-883818276_large.mp4";
+                                textGradient("linear-gradient(90deg, #e0eafc, #b1bfd8, #ffffff)"); // icy blue-white
+                            }
+                            else if (desc.innerText.includes("wind") ||
+                                desc.innerText.includes("Wind")) {
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2022/04/04/112957-696336342_large.mp4";
+                                textGradient("linear-gradient(90deg, #74ebd5, #ACB6E5)"); // breezy teal
+                            }
+                            else if (desc.innerText.includes("fog") ||
+                                desc.innerText.includes("Fog")) {
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2021/08/04/83880-585600454_large.mp4";
+                                textGradient("linear-gradient(90deg, #C9D6FF, #E2E2E2)"); // misty light
+                            }
+                            else if (desc.innerText.includes("mist") ||
+                                desc.innerText.includes("Mist")) {
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2020/04/21/36753-412873649_large.mp4";
+                                textGradient("linear-gradient(90deg, #e0eafc, #c1cbe1, #f5f7fa)"); // light blue-gray
                             }
                             else {
-                                document.getElementById("weather-info").style.display = "block";
-                                console.log(weatherData);
-                                cityName.innerText = weatherData.location.name;
-                                console.log(cityName);
-                                date.innerText = weatherData.current.last_updated;
-                                temp.innerText = weatherData.current.temp_c + "°C";
-                                desc.innerText = weatherData.current.condition.text;
-                                weatherIcon.src = weatherData.current.condition.icon;
-                                regionCountry.innerText = "".concat(weatherData.location.region, ", ").concat(weatherData.location.country);
-                                if (desc.innerText.includes("rain") || desc.innerText.includes('Rain')) {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2023/09/23/181916-867576005_large.mp4";
-                                }
-                                else if (desc.innerText.includes("cloud") || desc.innerText.includes('Cloud')) {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2024/07/14/221180_large.mp4";
-                                }
-                                else if (desc.innerText.includes("sunny") || desc.innerText.includes('Sunny')) {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2023/06/25/168788-839828005_large.mp4";
-                                }
-                                else if (desc.innerText.includes("snow") || desc.innerText.includes('Snow')) {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2023/11/12/188778-883818276_large.mp4";
-                                }
-                                else if (desc.innerText.includes("wind") || desc.innerText.includes('Wind')) {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2022/04/04/112957-696336342_large.mp4";
-                                }
-                                else if (desc.innerText.includes("fog") || desc.innerText.includes('Fog')) {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2021/08/04/83880-585600454_large.mp4";
-                                }
-                                else if (desc.innerText.includes("mist") || desc.innerText.includes('Mist')) {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2020/04/21/36753-412873649_large.mp4";
-                                }
-                                else {
-                                    bgVideo.src =
-                                        "https://cdn.pixabay.com/video/2016/09/14/5278-182817488_large.mp4";
-                                }
+                                bgVideo.src =
+                                    "https://cdn.pixabay.com/video/2016/09/14/5278-182817488_large.mp4";
+                                textGradient("90deg,#ff75a0,#674ea7,#3a2e4e,#ff75a0");
                             }
-                            return [2 /*return*/];
+                            _a.label = 5;
+                        case 5: return [2 /*return*/];
                     }
                 });
             }); });

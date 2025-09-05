@@ -6,37 +6,53 @@
     <title>Mausam</title>
     <link rel="stylesheet" href="index.css" />
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+      rel="shortcut icon"
+      href="https://i.pinimg.com/originals/06/c4/f7/06c4f70ec5931e2342e703e8a3f0a253.png"
+      type="image/x-icon"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
-    />
-	<link rel="shortcut icon" href="https://i.pinimg.com/originals/06/c4/f7/06c4f70ec5931e2342e703e8a3f0a253.png" type="image/x-icon">
   </head>
   <body>
-	<video src="https://cdn.pixabay.com/video/2016/09/14/5278-182817488_large.mp4" type="video/mp4" autoplay muted loop id="bg-video">
-</video>
-
+    <video
+      src="https://cdn.pixabay.com/video/2016/09/14/5278-182817488_large.mp4"
+      type="video/mp4"
+      autoplay
+      muted
+      loop
+      id="bg-video"
+    ></video>
     <div class="container">
-      <div class="weather-card">
-        <h1 style="color: green">Mausam</h1>
+      <div class="head-container">
+              <h1>Mausam Suhana hai!</h1>
         <h3>Today's Weather Forecast</h3>
-        <input type="text" id="city-input" placeholder="Enter city name" />
-        <button id="city-input-btn">Get Weather</button>
+        <div class="group">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="search-icon">
+            <g>
+              <path
+                d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"
+              ></path>
+            </g>
+          </svg>
+
+          <input
+            id="city-input"
+            class="input"
+            type="search"
+            placeholder="Enter city name"
+            name="searchbar"
+          />
+          </div>
+        </div>
+        <div class="weather-card">
         <div id="weather-info" class="animate__animated animate__fadeIn">
-          <h3 id="city-name"></h3>
+          <h2 id="city-name"></h2>
           <p id="region-country"></p>
           <p id="date"></p>
           <img id="weather-icon" src="" alt="Weather Icon" />
           <p id="temperature"></p>
           <p id="description"></p>
           <p id="wind-speed"></p>
+        </div>
+        <img id="city-img" src="" alt="">
         </div>
       </div>
     </div>
