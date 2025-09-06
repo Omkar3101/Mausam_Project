@@ -2,6 +2,7 @@
 //Geoapify - 744ff32fafd6489484a68e503580cf37
 
 
+
 const cityInput = document.getElementById("city-input") as HTMLInputElement;
 const cityName = document.getElementById("city-name") as HTMLHeadingElement;
 const date = document.getElementById("date") as HTMLParagraphElement;
@@ -14,36 +15,13 @@ const regionCountry = document.getElementById(
 const bgVideo = document.getElementById("bg-video") as HTMLVideoElement;
 const h1 = document.querySelector("h1") as HTMLHeadingElement;
 const cityImg = document.getElementById("city-img") as HTMLImageElement;
-
+let scale = 8;
+let initialDistance = 0;
+let currentLongitude = 0;
+let currentLatitude = 0;
 
 const GEOAPIFY_API_KEY = "744ff32fafd6489484a68e503580cf37"; // apna Geoapify API Key
 const OPENCAGE_API_KEY = "933e577d37444ed5ab162b1f5f6e6371"; // apna Opencage API Key
-
-
-
-async function getCoordinates(cityName: string){
-  try{
-    const res = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${cityName}&key=${OPENCAGE_API_KEY}`);
-
-    const data = await res.json();
-
-    if (data.results.length > 0){
-      const {lat,lng} = data.results[0].geometry;
-      return {
-        latitude: lat,
-        longitude: lng
-      };
-    }
-    throw new Error("Location not found");
-  } catch (error){
-    console.error("Error getting coordinates:", error);
-    return null;
-  }
-}
-
-
-
-
 
 
 
@@ -55,6 +33,81 @@ async function fetchWeatherData(cityName: string) {
   const data = await res.json();
   return data;
 }
+
+async function getCoordinates(cityName: string) {
+  try {
+    const res = await fetch(
+      `https://api.opencagedata.com/geocode/v1/json?q=${cityName}&key=${OPENCAGE_API_KEY}`
+    );
+
+    const data = await res.json();
+
+    if (data.results.length > 0) {
+      const { lat, lng } = data.results[0].geometry;
+      return {
+        latitude: lat,
+        longitude: lng,
+      };
+    }
+    throw new Error("Location not found");
+  } catch (error) {
+    console.error("Error getting coordinates:", error);
+    return null;
+  }
+}
+
+
+// Create a function to update map
+function updateMap(longitude: number, latitude: number, zoomScale: number) {
+  cityImg.src = `https://maps.geoapify.com/v1/staticmap?style=osm-liberty&width=300&height=300&center=lonlat:${longitude},${latitude}&zoom=${zoomScale}&apiKey=${GEOAPIFY_API_KEY}`;
+}
+
+function clampZoom(value: number): number {
+  return Math.min(Math.max(value, 1), 20);
+}
+
+// Add touch events outside main function
+cityImg.addEventListener("touchstart", (event) => {
+  if (event.touches.length === 2) {
+    event.preventDefault();
+    initialDistance = Math.hypot(
+      (event.touches[0]?.pageX ?? 0) - (event.touches[1]?.pageX ?? 0),
+      (event.touches[0]?.pageY ?? 0) - (event.touches[1]?.pageY ?? 0)
+    );
+  }
+});
+
+cityImg.addEventListener("touchmove", (event) => {
+  if (event.touches.length === 2) {
+    event.preventDefault();
+    const currentDistance = Math.hypot(
+      (event.touches[0]?.pageX ?? 0) - (event.touches[1]?.pageX ?? 0),
+      (event.touches[0]?.pageY ?? 0) - (event.touches[1]?.pageY ?? 0)
+    );
+
+    const delta = currentDistance - initialDistance;
+
+    if (Math.abs(delta) > 10) {
+      if (delta > 0 && scale < 20) {
+        scale = clampZoom(scale + 0.2);
+      } else if (delta < 0 && scale > 1) {
+        scale = clampZoom(scale - 0.2);
+      }
+      updateMap(currentLongitude, currentLatitude, scale);
+      initialDistance = currentDistance;
+    }
+  }
+});
+
+cityImg.addEventListener("wheel", (event) => {
+  event.preventDefault();
+  if (event.deltaY < 0 && scale < 20) {
+    scale = clampZoom(scale + 0.2);
+  } else if (event.deltaY > 0 && scale > 1) {
+    scale = clampZoom(scale - 0.2);
+  }
+  updateMap(currentLongitude, currentLatitude, scale);
+});
 
 // Main Function
 async function main() {
@@ -81,19 +134,16 @@ async function main() {
         weatherIcon!.src = weatherData.current.condition.icon;
         regionCountry!.innerText = `${weatherData.location.region}, ${weatherData.location.country}`;
 
-
-
         // Get coordinates and set city image
-        const coordinates = await getCoordinates(cityName!.innerText);
-        if (coordinates) {
-          const { latitude, longitude } = coordinates;
-          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-          cityImg.src = `https://maps.geoapify.com/v1/staticmap?style=osm-liberty&width=300&height=300&center=lonlat:${longitude},${latitude}&zoom=8&apiKey=${GEOAPIFY_API_KEY}`;
-        }
+      const coordinates = await getCoordinates(cityName!.innerText);
+      if (coordinates) {
+        const { latitude, longitude } = coordinates;
+        currentLatitude = latitude;
+        currentLongitude = longitude;
+        scale = 8; // Reset zoom level for new city
+        updateMap(longitude, latitude, scale);
+      }
 
-
-
-        
 
 
         const textGradient = (css: string) => {

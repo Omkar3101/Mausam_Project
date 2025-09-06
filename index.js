@@ -46,38 +46,12 @@ var regionCountry = document.getElementById("region-country");
 var bgVideo = document.getElementById("bg-video");
 var h1 = document.querySelector("h1");
 var cityImg = document.getElementById("city-img");
+var scale = 8;
+var initialDistance = 0;
+var currentLongitude = 0;
+var currentLatitude = 0;
 var GEOAPIFY_API_KEY = "744ff32fafd6489484a68e503580cf37"; // apna Geoapify API Key
 var OPENCAGE_API_KEY = "933e577d37444ed5ab162b1f5f6e6371"; // apna Opencage API Key
-function getCoordinates(cityName) {
-    return __awaiter(this, void 0, void 0, function () {
-        var res, data, _a, lat, lng, error_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 3, , 4]);
-                    return [4 /*yield*/, fetch("https://api.opencagedata.com/geocode/v1/json?q=".concat(cityName, "&key=").concat(OPENCAGE_API_KEY))];
-                case 1:
-                    res = _b.sent();
-                    return [4 /*yield*/, res.json()];
-                case 2:
-                    data = _b.sent();
-                    if (data.results.length > 0) {
-                        _a = data.results[0].geometry, lat = _a.lat, lng = _a.lng;
-                        return [2 /*return*/, {
-                                latitude: lat,
-                                longitude: lng
-                            }];
-                    }
-                    throw new Error("Location not found");
-                case 3:
-                    error_1 = _b.sent();
-                    console.error("Error getting coordinates:", error_1);
-                    return [2 /*return*/, null];
-                case 4: return [2 /*return*/];
-            }
-        });
-    });
-}
 // Fetch Weather Data from API
 function fetchWeatherData(cityName) {
     return __awaiter(this, void 0, void 0, function () {
@@ -95,6 +69,79 @@ function fetchWeatherData(cityName) {
         });
     });
 }
+function getCoordinates(cityName) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, data, _a, lat, lng, error_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 3, , 4]);
+                    return [4 /*yield*/, fetch("https://api.opencagedata.com/geocode/v1/json?q=".concat(cityName, "&key=").concat(OPENCAGE_API_KEY))];
+                case 1:
+                    res = _b.sent();
+                    return [4 /*yield*/, res.json()];
+                case 2:
+                    data = _b.sent();
+                    if (data.results.length > 0) {
+                        _a = data.results[0].geometry, lat = _a.lat, lng = _a.lng;
+                        return [2 /*return*/, {
+                                latitude: lat,
+                                longitude: lng,
+                            }];
+                    }
+                    throw new Error("Location not found");
+                case 3:
+                    error_1 = _b.sent();
+                    console.error("Error getting coordinates:", error_1);
+                    return [2 /*return*/, null];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+// Create a function to update map
+function updateMap(longitude, latitude, zoomScale) {
+    cityImg.src = "https://maps.geoapify.com/v1/staticmap?style=osm-liberty&width=300&height=300&center=lonlat:".concat(longitude, ",").concat(latitude, "&zoom=").concat(zoomScale, "&apiKey=").concat(GEOAPIFY_API_KEY);
+}
+function clampZoom(value) {
+    return Math.min(Math.max(value, 1), 20);
+}
+// Add touch events outside main function
+cityImg.addEventListener("touchstart", function (event) {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    if (event.touches.length === 2) {
+        event.preventDefault();
+        initialDistance = Math.hypot(((_b = (_a = event.touches[0]) === null || _a === void 0 ? void 0 : _a.pageX) !== null && _b !== void 0 ? _b : 0) - ((_d = (_c = event.touches[1]) === null || _c === void 0 ? void 0 : _c.pageX) !== null && _d !== void 0 ? _d : 0), ((_f = (_e = event.touches[0]) === null || _e === void 0 ? void 0 : _e.pageY) !== null && _f !== void 0 ? _f : 0) - ((_h = (_g = event.touches[1]) === null || _g === void 0 ? void 0 : _g.pageY) !== null && _h !== void 0 ? _h : 0));
+    }
+});
+cityImg.addEventListener("touchmove", function (event) {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    if (event.touches.length === 2) {
+        event.preventDefault();
+        var currentDistance = Math.hypot(((_b = (_a = event.touches[0]) === null || _a === void 0 ? void 0 : _a.pageX) !== null && _b !== void 0 ? _b : 0) - ((_d = (_c = event.touches[1]) === null || _c === void 0 ? void 0 : _c.pageX) !== null && _d !== void 0 ? _d : 0), ((_f = (_e = event.touches[0]) === null || _e === void 0 ? void 0 : _e.pageY) !== null && _f !== void 0 ? _f : 0) - ((_h = (_g = event.touches[1]) === null || _g === void 0 ? void 0 : _g.pageY) !== null && _h !== void 0 ? _h : 0));
+        var delta = currentDistance - initialDistance;
+        if (Math.abs(delta) > 10) {
+            if (delta > 0 && scale < 20) {
+                scale = clampZoom(scale + 0.2);
+            }
+            else if (delta < 0 && scale > 1) {
+                scale = clampZoom(scale - 0.2);
+            }
+            updateMap(currentLongitude, currentLatitude, scale);
+            initialDistance = currentDistance;
+        }
+    }
+});
+cityImg.addEventListener("wheel", function (event) {
+    event.preventDefault();
+    if (event.deltaY < 0 && scale < 20) {
+        scale = clampZoom(scale + 0.2);
+    }
+    else if (event.deltaY > 0 && scale > 1) {
+        scale = clampZoom(scale - 0.2);
+    }
+    updateMap(currentLongitude, currentLatitude, scale);
+});
 // Main Function
 function main() {
     return __awaiter(this, void 0, void 0, function () {
@@ -136,8 +183,10 @@ function main() {
                             coordinates = _a.sent();
                             if (coordinates) {
                                 latitude = coordinates.latitude, longitude = coordinates.longitude;
-                                console.log("Latitude: ".concat(latitude, ", Longitude: ").concat(longitude));
-                                cityImg.src = "https://maps.geoapify.com/v1/staticmap?style=osm-liberty&width=300&height=300&center=lonlat:".concat(longitude, ",").concat(latitude, "&zoom=8&apiKey=").concat(GEOAPIFY_API_KEY);
+                                currentLatitude = latitude;
+                                currentLongitude = longitude;
+                                scale = 8; // Reset zoom level for new city
+                                updateMap(longitude, latitude, scale);
                             }
                             textGradient = function (css) {
                                 h1.style.background = css;
