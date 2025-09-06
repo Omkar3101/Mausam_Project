@@ -118,15 +118,12 @@ async function main() {
       const weatherData = await fetchWeatherData(city);
       if (city === "") {
         alert("Please enter a city name");
-        document.getElementById("weather-info")!.style.display = "none";
-        document.getElementById("city-img")!.style.display = "none";
+        document.getElementById("weather-card")!.style.display = "none";
       } else if (weatherData.error) {
         alert(weatherData.error.message);
-        document.getElementById("weather-info")!.style.display = "none";
-        document.getElementById("city-img")!.style.display = "none";
+        document.getElementById("weather-card")!.style.display = "none";
       } else {
-        document.getElementById("weather-info")!.style.display = "block";
-        document.getElementById("city-img")!.style.display = "block";
+        document.getElementById("weather-card")!.style.display = "block";
         cityName!.innerText = weatherData.location.name;
         date!.innerText = weatherData.current.last_updated;
         temp!.innerText = weatherData.current.temp_c + "°C";

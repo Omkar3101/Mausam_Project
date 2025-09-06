@@ -160,18 +160,15 @@ function main() {
                             weatherData = _a.sent();
                             if (!(city === "")) return [3 /*break*/, 2];
                             alert("Please enter a city name");
-                            document.getElementById("weather-info").style.display = "none";
-                            document.getElementById("city-img").style.display = "none";
+                            document.getElementById("weather-card").style.display = "none";
                             return [3 /*break*/, 5];
                         case 2:
                             if (!weatherData.error) return [3 /*break*/, 3];
                             alert(weatherData.error.message);
-                            document.getElementById("weather-info").style.display = "none";
-                            document.getElementById("city-img").style.display = "none";
+                            document.getElementById("weather-card").style.display = "none";
                             return [3 /*break*/, 5];
                         case 3:
-                            document.getElementById("weather-info").style.display = "block";
-                            document.getElementById("city-img").style.display = "block";
+                            document.getElementById("weather-card").style.display = "block";
                             cityName.innerText = weatherData.location.name;
                             date.innerText = weatherData.current.last_updated;
                             temp.innerText = weatherData.current.temp_c + "°C";
