@@ -26,7 +26,7 @@ A modern, responsive weather web app built using HTML, CSS, and TypeScript to ch
 
 ## License
 
-This project is licensed under the MIT License – see the LICENSE file for details.
+This project is licensed under the MIT License – see the [LICENSE](https://github.com/Omkar3101/Mausam_Project/blob/main/LICENSE) file for details.
 
 ## Live Demo
 
